@@ -14,6 +14,13 @@ variable "default_tg_arn" {
   
 }
 
+variable "listner_rules" {
+  type = map(object({
+      priority = number
+      target_group_arn = string
+      path_pattern = list(string)
+  }))
+}
 variable "web_sg_ingress" {
   type = map(object({
     port        = number

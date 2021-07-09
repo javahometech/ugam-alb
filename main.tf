@@ -4,8 +4,9 @@ module "networking" {
 
 locals {
   targets = {
-      "orders" : aws_instance.web.id
-      "payments": aws_instance.web2.id
+      "orders" : aws_instance.web2.id
+      "payments": aws_instance.web.id
+      "cart": aws_instance.web3.id
   }
   target_group_arns = [for k, v in module.payments-target :  v.target_group_arns]
 }
@@ -25,9 +26,23 @@ module "alb" {
   default_tg_arn = local.target_group_arns[0]
   listner_rules = {
     "orders" = {
-      path_pattern = [ "/payments/*" ]
+      path_pattern = [ "/orders*" ]
       priority = 1
-      target_group_arn = "value"
+      target_group_arn = local.target_group_arns[1]
+    }
+    "payments" = {
+      path_pattern = [ "/payments*" ]
+      priority = 2
+      target_group_arn = local.target_group_arns[2]
+    }
+    "cart" = {
+      path_pattern = [ "/cart*" ]
+      priority = 3
+      target_group_arn = local.target_group_arns[0]
     }
   }
+}
+
+output "target_group_arns" {
+  value = local.target_group_arns
 }

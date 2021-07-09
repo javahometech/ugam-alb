@@ -60,14 +60,6 @@ resource "aws_lb_listener" "main" {
   }
 }
 
-variable "listner_rules" {
-  type = map(object({
-      priority = number
-      target_group_arn = string
-      path_pattern = list(string)
-  }))
-}
-
 resource "aws_lb_listener_rule" "static" {
   for_each = var.listner_rules
   listener_arn = aws_lb_listener.main.arn
@@ -75,12 +67,12 @@ resource "aws_lb_listener_rule" "static" {
 
   action {
     type             = "forward"
-    target_group_arn = each.value.priority.target_group_arn
+    target_group_arn = each.value.target_group_arn
   }
 
   condition {
     path_pattern {
-      values = each.value.priority.path_pattern
+      values = each.value.path_pattern
     }
   }
 }

@@ -30,3 +30,17 @@ resource "aws_instance" "web2" {
     Name = "orders service"
   }
 }
+
+resource "aws_instance" "web3" {
+  ami                         = "ami-0ab4d1e9cf9a1215a"
+  instance_type               = "t2.micro"
+  subnet_id                   = module.networking.pub_sub_ids[1]
+  associate_public_ip_address = true
+  availability_zone           = module.networking.azs[1]
+  vpc_security_group_ids      = [aws_security_group.web_sg.id]
+  user_data                   = file("./scripts/ms3-apache.sh")
+  key_name                    = aws_key_pair.web_api_key.key_name
+  tags = {
+    Name = "cart service"
+  }
+}
