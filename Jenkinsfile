@@ -19,7 +19,23 @@ pipeline{
         
         stage("Terraform Dev"){
             steps{
-                sh "terraform apply -auto-approve"
+                     sh "terraform apply -auto-approve"
+                }
+        }
+        
+        stage("Terraform Dev"){
+            steps{
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds-uat', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                     sh "terraform apply -auto-approve"
+                }
+            }
+        }
+        
+        stage("Terraform Prod"){
+            steps{
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds-prod', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                     sh "terraform apply -auto-approve"
+                }
             }
         }
       
